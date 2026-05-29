@@ -126,12 +126,8 @@ void app_init_hw1(void)
 
 int main(void)
 {
-    /* Only initialize hardware and run motor test loop */
-    app_init_hw1();
-    for (;;)
-    {
-        app_main();
-    }
+    app_init_hw();
+    app_main();
 }
 
 
