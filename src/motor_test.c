@@ -15,67 +15,173 @@ Type a command and press Enter (if required by your terminal).
 ============================================================
 */
 
+#include "cybsp.h"
 #include <stdio.h>
 #include "motor_test.h"
 #include "main.h"
-#include "cy_pdl.h"
 #include "cyhal.h"
 
-/* Motor pin mapping from schematic */
-#define M0_IN1_PORT GPIO_PRT9
-#define M0_IN1_PIN  6
-#define M0_IN1_MASK (1u << M0_IN1_PIN)
+/* Motor pin mapping from schematic (keep these assignments fixed) */
+#define M0_IN1 P9_6
+#define M0_IN2 P7_2
+#define M1_IN1 P5_6
+#define M1_IN2 P10_6
 
-#define M0_IN2_PORT GPIO_PRT7
-#define M0_IN2_PIN  2
-#define M0_IN2_MASK (1u << M0_IN2_PIN)
-
-#define M1_IN1_PORT GPIO_PRT5
-#define M1_IN1_PIN  6
-#define M1_IN1_MASK (1u << M1_IN1_PIN)
-
-#define M1_IN2_PORT GPIO_PRT10
-#define M1_IN2_PIN  6
-#define M1_IN2_MASK (1u << M1_IN2_PIN)
+static void motor_command_forward(void)
+{
+    cyhal_gpio_write(M0_IN1, true);
+    cyhal_gpio_write(M0_IN2, false);
+    cyhal_gpio_write(M1_IN1, true);
+    cyhal_gpio_write(M1_IN2, false);
+}
 
 
 void app_init_hw(void)
 {
+    cy_rslt_t result;
+
+    result = cybsp_init();
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
+    __enable_irq();
+
+    result = cy_retarget_io_init_fc(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
+            CYBSP_DEBUG_UART_CTS, CYBSP_DEBUG_UART_RTS, CY_RETARGET_IO_BAUDRATE);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
+    result = cyhal_gpio_init(CYBSP_USER_LED,
+                             CYHAL_GPIO_DIR_OUTPUT,
+                             CYHAL_GPIO_DRIVE_STRONG,
+                             CYBSP_LED_STATE_OFF);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
     motor_gpio_init();
+    printf("[INIT] app_init_hw complete. LED and motor pins initialized.\r\n");
 }
 
 void app_main(void)
 {
-    motor_test_loop();
+    printf("[RUN] app_main entered. Starting continuous forward drive loop.\r\n");
+
+    while (1)
+    {
+        motor_command_forward();
+        cyhal_gpio_toggle(CYBSP_USER_LED);
+        printf("[RUN] Forward command active. LED toggled.\r\n");
+        cyhal_system_delay_ms(500);
+    }
 }
 
 void motor_gpio_init(void)
 {
-    Cy_GPIO_Pin_FastInit(M0_IN1_PORT, M0_IN1_PIN,
-                         CY_GPIO_DM_STRONG_IN_OFF, 0, HSIOM_SEL_GPIO);
+    cy_rslt_t result;
 
-    Cy_GPIO_Pin_FastInit(M0_IN2_PORT, M0_IN2_PIN,
-                         CY_GPIO_DM_STRONG_IN_OFF, 0, HSIOM_SEL_GPIO);
+    result = cyhal_gpio_init(M0_IN1, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
 
-    Cy_GPIO_Pin_FastInit(M1_IN1_PORT, M1_IN1_PIN,
-                         CY_GPIO_DM_STRONG_IN_OFF, 0, HSIOM_SEL_GPIO);
+    result = cyhal_gpio_init(M0_IN2, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
 
-    Cy_GPIO_Pin_FastInit(M1_IN2_PORT, M1_IN2_PIN,
-                         CY_GPIO_DM_STRONG_IN_OFF, 0, HSIOM_SEL_GPIO);
+    result = cyhal_gpio_init(M1_IN1, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
+    result = cyhal_gpio_init(M1_IN2, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
+    printf("[INIT] Motor GPIO outputs configured: P9_6, P7_2, P5_6, P10_6\r\n");
 }
+
 
 void motor_test_loop(void)
 {
-    // Run both motors forward continuously
-    M0_IN1_PORT->OUT_SET = M0_IN1_MASK;//EN //* gives address and assigns
-    M0_IN2_PORT->OUT_CLR = M0_IN2_MASK;
+    app_main();
+}
 
-    M1_IN1_PORT->OUT_SET = M1_IN1_MASK;
-    M1_IN2_PORT->OUT_CLR = M1_IN2_MASK;
+void motor_set_left(int speed)
+{
+    if (speed >= 0)
+    {
+        cyhal_gpio_write(M0_IN1, true);
+        cyhal_gpio_write(M0_IN2, false);
+    }
+    else
+    {
+        cyhal_gpio_write(M0_IN1, false);
+        cyhal_gpio_write(M0_IN2, true);
+    }
+}
 
-    // Wait 1000 ms, then print message
-    cyhal_system_delay_ms(1000);
-    printf("Motors running forward...\n");
+void motor_set_right(int speed)
+{
+    if (speed >= 0)
+    {
+        cyhal_gpio_write(M1_IN1, true);
+        cyhal_gpio_write(M1_IN2, false);
+    }
+    else
+    {
+        cyhal_gpio_write(M1_IN1, false);
+        cyhal_gpio_write(M1_IN2, true);
+    }
+}
+
+void tank_drive(int left_speed, int right_speed)
+{
+    motor_set_left(left_speed);
+    motor_set_right(right_speed);
+}
+
+void motor_stop_all(void)
+{
+    cyhal_gpio_write(M0_IN1, false);
+    cyhal_gpio_write(M0_IN2, false);
+    cyhal_gpio_write(M1_IN1, false);
+    cyhal_gpio_write(M1_IN2, false);
+}
+
+void motor_forward(uint8_t speed)
+{
+    (void)speed;
+    tank_drive(100, 100);
+}
+
+void motor_backward(uint8_t speed)
+{
+    (void)speed;
+    tank_drive(-100, -100);
+}
+
+void motor_turn_left(uint8_t speed)
+{
+    (void)speed;
+    tank_drive(-100, 100);
+}
+
+void motor_turn_right(uint8_t speed)
+{
+    (void)speed;
+    tank_drive(100, -100);
 }
 
 // Interactive UART rover control (independent function)
