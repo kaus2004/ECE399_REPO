@@ -27,7 +27,15 @@ Type a command and press Enter (if required by your terminal).
 #define M1_IN1 P5_6
 #define M1_IN2 P10_6
 
-static void motor_command_forward(void)
+void motor_forward(void)
+{
+    cyhal_gpio_write(M0_IN1, true);
+    cyhal_gpio_write(M0_IN2, true);
+    cyhal_gpio_write(M1_IN1, true);
+    cyhal_gpio_write(M1_IN2, true);
+}
+
+void motor_backward(void)
 {
     cyhal_gpio_write(M0_IN1, true);
     cyhal_gpio_write(M0_IN2, false);
@@ -35,6 +43,21 @@ static void motor_command_forward(void)
     cyhal_gpio_write(M1_IN2, false);
 }
 
+void motor_turn_rightF(void)
+{
+    cyhal_gpio_write(M0_IN1, false);
+    cyhal_gpio_write(M0_IN2, true);
+    cyhal_gpio_write(M1_IN1, true);
+    cyhal_gpio_write(M1_IN2, true);
+}
+
+void motor_turn_leftF(void)
+{
+    cyhal_gpio_write(M0_IN1, true);
+    cyhal_gpio_write(M0_IN2, true);
+    cyhal_gpio_write(M1_IN1, true);
+    cyhal_gpio_write(M1_IN2, false);
+}
 
 void app_init_hw(void)
 {
@@ -74,9 +97,17 @@ void app_main(void)
 
     while (1)
     {
-        motor_command_forward();
+        motor_turn_rightF();
         cyhal_gpio_toggle(CYBSP_USER_LED);
         printf("[RUN] Forward command active. LED toggled.\r\n");
+        cyhal_system_delay_ms(500);
+        motor_stop_all();
+
+        cyhal_system_delay_ms(1000);
+        // motor_backward();
+
+        cyhal_gpio_toggle(CYBSP_USER_LED);
+        printf("[RUN] Backward command active. LED toggled.\r\n");
         cyhal_system_delay_ms(500);
     }
 }
@@ -118,39 +149,6 @@ void motor_test_loop(void)
     app_main();
 }
 
-void motor_set_left(int speed)
-{
-    if (speed >= 0)
-    {
-        cyhal_gpio_write(M0_IN1, true);
-        cyhal_gpio_write(M0_IN2, false);
-    }
-    else
-    {
-        cyhal_gpio_write(M0_IN1, false);
-        cyhal_gpio_write(M0_IN2, true);
-    }
-}
-
-void motor_set_right(int speed)
-{
-    if (speed >= 0)
-    {
-        cyhal_gpio_write(M1_IN1, true);
-        cyhal_gpio_write(M1_IN2, false);
-    }
-    else
-    {
-        cyhal_gpio_write(M1_IN1, false);
-        cyhal_gpio_write(M1_IN2, true);
-    }
-}
-
-void tank_drive(int left_speed, int right_speed)
-{
-    motor_set_left(left_speed);
-    motor_set_right(right_speed);
-}
 
 void motor_stop_all(void)
 {
@@ -160,29 +158,9 @@ void motor_stop_all(void)
     cyhal_gpio_write(M1_IN2, false);
 }
 
-void motor_forward(uint8_t speed)
-{
-    (void)speed;
-    tank_drive(100, 100);
-}
 
-void motor_backward(uint8_t speed)
-{
-    (void)speed;
-    tank_drive(-100, -100);
-}
 
-void motor_turn_left(uint8_t speed)
-{
-    (void)speed;
-    tank_drive(-100, 100);
-}
 
-void motor_turn_right(uint8_t speed)
-{
-    (void)speed;
-    tank_drive(100, -100);
-}
 
 // Interactive UART rover control (independent function)
 // Call this from main to control rover via terminal
@@ -206,19 +184,19 @@ void motor_uart_control(void)
         {
             case 'w':
                 printf("Forward\n");
-                motor_forward(70);
+                motor_forward();
                 break;
             case 's':
                 printf("Backward\n");
-                motor_backward(70);
+                motor_backward();
                 break;
             case 'a':
                 printf("Turn left\n");
-                motor_turn_left(60);
+                motor_turn_rightF();
                 break;
             case 'd':
                 printf("Turn right\n");
-                motor_turn_right(60);
+                motor_turn_leftF();
                 break;
             case 'x':
                 printf("Stop\n");
