@@ -2,11 +2,9 @@
  * Copy of the motor test implementation with a prim_ prefix so it can
  * coexist with motor_test.c without duplicate symbol conflicts.
  */
-#include "cybsp.h"
-#include <stdio.h>
 #include "motor_prim.h"
-#include "main.h"
-#include "cyhal.h"
+
+#if defined(MOTOR_PRIM)
 
 #define M0_IN1 P9_6
 #define M0_IN2 P7_2
@@ -29,10 +27,25 @@ void prim_motor_backward(void)
 	cyhal_gpio_write(M1_IN2, false);
 }
 
-void prim_motor_turn_rightF(void)
+void prim_motor_turn_right(void)
 {
 	cyhal_gpio_write(M0_IN1, false);
 	cyhal_gpio_write(M0_IN2, true);
+	cyhal_gpio_write(M1_IN1, true);
+	cyhal_gpio_write(M1_IN2, true);
+}
+
+void prim_motor_turn_left(void)
+{
+	cyhal_gpio_write(M0_IN1, true);
+	cyhal_gpio_write(M0_IN2, true);
+	cyhal_gpio_write(M1_IN1, true);
+	cyhal_gpio_write(M1_IN2, false);
+}
+void prim_motor_turn_rightF(void)
+{
+	cyhal_gpio_write(M0_IN1, true);
+	cyhal_gpio_write(M0_IN2, false);
 	cyhal_gpio_write(M1_IN1, true);
 	cyhal_gpio_write(M1_IN2, true);
 }
@@ -45,7 +58,7 @@ void prim_motor_turn_leftF(void)
 	cyhal_gpio_write(M1_IN2, false);
 }
 
-void prim_app_init_hw(void)
+void app_init_hw(void)
 {
 	cy_rslt_t result;
 
@@ -77,7 +90,7 @@ void prim_app_init_hw(void)
 	printf("[INIT] app_init_hw complete. LED and motor pins initialized.\r\n");
 }
 
-void prim_app_main(void)
+void app_main(void)
 {
 	printf("[RUN] app_main entered. Starting continuous forward drive loop.\r\n");
 
@@ -128,10 +141,6 @@ void prim_motor_gpio_init(void)
 	printf("[INIT] Motor GPIO outputs configured: P9_6, P7_2, P5_6, P10_6\r\n");
 }
 
-void prim_motor_test_loop(void)
-{
-	prim_app_main();
-}
 
 void prim_motor_stop_all(void)
 {
@@ -185,3 +194,4 @@ void prim_motor_uart_control(void)
 		}
 	}
 }
+#endif

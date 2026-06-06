@@ -12,6 +12,7 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include "cyhal.h"
 #include "cybsp.h"
 #include "cyhal_hw_types.h"
 #include "cyhal_gpio.h"
@@ -32,44 +33,19 @@
 
 #if defined(ECE353_FREERTOS)
 // /* FreeRTOS Includes */
-// #include <FreeRTOS.h>
+#include <FreeRTOS.h>
 // #include <event_groups.h>
 // #include <queue.h>
 // #include <semphr.h>
-// #include <task.h>
+// #include <task.h> MS ECE do for masters.
 #endif
 
 /* This macro is used to determine if we are building an executable for example code or ICE code.
  * Only a single line should be uncommented at one time.  
 */
-//#define EX01         /* Example Code C Basics*/
-//#define EX02         /* Example Code LCD */
-//#define EX03         /* Example Code Timer Interrupts */
-//#define EX04         /* Example Code Timer Interrupts */
-//#define EX05         /* Example Code FreeRTOS Tasks */
-//#define EX06         /* Example Code FreeRTOS Tasks */
-//#define EX08         /* Example Code FreeRTOS LCD Gatekeeper */
-//#define EX12         /* Example Code FreeRTOS IMU */
-//#define EX13         /* Example Code FreeRTOS Temp Sensor */
-
-//#define ICE01       /* In-Class Exercise -- Memory Mapped IO - GPIO */
-//#define ICE02       /* In-Class Exercise -- LCD 8080 Driver */
-//#define ICE03       /* In-Class Exercise -- Timer Interrupts/Debounce Buttons */
-//#define ICE04       /* In-Class Exercise -- PWM Buzzer */
-//#define ICE05       /* In-Class Exercise -- FreeRTOS Event Groups */
-//#define ICE06       /* In-Class Exercise -- FreeRTOS Queues */
-//#define ICE08       /* In-Class Exercise -- FreeRTOS LCD Gatekeeper */
-//#define ICE09       /* In-Class Exercise -- FreeRTOS UART Rx IRQ + Buffering  */
-//#define ICE10       /* In-Class Exercise -- FreeRTOS UART Tx IRQ + Buffering  */
-//#define ICE11
-//#define ICE12
-//#define ICE13       /* In-Class Exercise -- FreeRTOS Temp Sensor Task */
-//#define ICE14       /* In-Class Exercise -- FreeRTOS I2C Bus Semaphore */
-
-//#define HW01
-//#define HW02
-//#define HW05
-#define HW06
+// #define HW06
+#define MOTOR_TEST
+//#define MOTOR_PRIM
 
 extern char NAME[];
 extern char APP_DESCRIPTION[];

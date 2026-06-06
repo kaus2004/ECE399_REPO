@@ -1,7 +1,7 @@
 #ifndef MOTOR_PRIM_H
 #define MOTOR_PRIM_H
 
-#include <stdint.h>
+#include "main.h"
 
 void prim_motor_gpio_init(void);
 void prim_motor_stop_all(void);
@@ -11,7 +11,5 @@ void prim_motor_turn_rightF(void);
 void prim_motor_turn_leftF(void);
 void prim_motor_test_loop(void);
 void prim_motor_uart_control(void);
-void prim_app_init_hw(void);
-void prim_app_main(void);
 
 #endif // MOTOR_PRIM_H

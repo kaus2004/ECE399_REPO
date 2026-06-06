@@ -1,7 +1,7 @@
 #ifndef MOTOR_TEST_H
 #define MOTOR_TEST_H
 
-#include <stdint.h>
+#include "main.h"
 
 // =========================
 // Motor Control API for DRV8874 Tank Drive
@@ -22,4 +22,6 @@ void motor_turn_rightF(void);  // Left backward, right forward
 // Main test sequence (runs a sequence of maneuvers)
 void motor_test_loop(void);
 void motor_uart_control(void);
+void rover_execute_command(char cmd);
+void ble_comm_start(void);
 #endif // MOTOR_TEST_H

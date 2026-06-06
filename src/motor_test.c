@@ -15,11 +15,8 @@ Type a command and press Enter (if required by your terminal).
 ============================================================
 */
 
-#include "cybsp.h"
-#include <stdio.h>
 #include "motor_test.h"
-#include "main.h"
-#include "cyhal.h"
+#if defined(MOTOR_TEST)
 
 /* Motor pin mapping from schematic (keep these assignments fixed) */
 #define M0_IN1 P9_6
@@ -144,11 +141,6 @@ void motor_gpio_init(void)
 }
 
 
-void motor_test_loop(void)
-{
-    app_main();
-}
-
 
 void motor_stop_all(void)
 {
@@ -208,3 +200,4 @@ void motor_uart_control(void)
         }
     }
 }
+#endif
