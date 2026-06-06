@@ -1,7 +1,27 @@
 [
     {
+        "asset-name": "abstraction-rtos",
+        "locked-commit": "release-v1.12.0"
+    },
+    {
+        "asset-name": "bluetooth-freertos",
+        "locked-commit": "release-v3.4.0"
+    },
+    {
+        "asset-name": "btstack",
+        "locked-commit": "release-v5.0.5"
+    },
+    {
+        "asset-name": "btstack-integration",
+        "locked-commit": "release-v7.0.1"
+    },
+    {
         "asset-name": "cat1cm0p",
         "locked-commit": "release-v1.10.0"
+    },
+    {
+        "asset-name": "clib-support",
+        "locked-commit": "release-v1.8.0"
     },
     {
         "asset-name": "cmsis",
@@ -18,6 +38,10 @@
     {
         "asset-name": "device-db",
         "locked-commit": "release-v4.37.0"
+    },
+    {
+        "asset-name": "freertos",
+        "locked-commit": "release-v10.6.202"
     },
     {
         "asset-name": "mtb-hal-cat1",

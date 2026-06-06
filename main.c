@@ -90,12 +90,12 @@ static void isr_timer(void *callback_arg, cyhal_timer_event_t event);
 void app_init_hw1(void)
 {
     cy_rslt_t result;
-#if defined (CY_DEVICE_SECURE)
+    #if defined (CY_DEVICE_SECURE)
     cyhal_wdt_t wdt_obj;
     result = cyhal_wdt_init(&wdt_obj, cyhal_wdt_get_max_timeout_ms());
     CY_ASSERT(CY_RSLT_SUCCESS == result);
     cyhal_wdt_free(&wdt_obj);
-#endif
+    #endif
     result = cybsp_init();
     if (result != CY_RSLT_SUCCESS)
     {
@@ -126,11 +126,25 @@ void app_init_hw1(void)
 
 int main(void)
 {
-    app_init_hw();
-    app_main();
+    cy_rslt_t result;
+    /* Initialize the device and board peripherals */
+    result = cybsp_init();
+
+    /* Board init failed. Stop program execution */
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
+    /* Enable global interrupts */
+    __enable_irq();
+
+    for (;;)
+    {
+        app_init_hw();
+        app_main();
+    }
 }
-
-
 /*******************************************************************************
 * Function Name: timer_init
 ********************************************************************************

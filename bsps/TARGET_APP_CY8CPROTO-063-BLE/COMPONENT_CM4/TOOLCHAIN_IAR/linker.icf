@@ -19,7 +19,8 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2016-2021 Cypress Semiconductor Corporation
+* (c) 2016-2026, Infineon Technologies AG or an affiliate of
+* Infineon Technologies AG.
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +54,7 @@ define symbol __ICFEDIT_intvec_start__ = 0x00000000;
  * where 'xx' is the device group; for example, 'cy8c6xx7_cm0plus.icf'.
  */
 /* RAM */
-define symbol __ICFEDIT_region_IRAM1_start__ = 0x08003000;
+define symbol __ICFEDIT_region_IRAM1_start__ = 0x08002000;
 define symbol __ICFEDIT_region_IRAM1_end__   = 0x080477FF;
 
 /* Flash */
@@ -133,7 +134,7 @@ if (!isdefinedsymbol(__HEAP_SIZE)) {
  * https://github.com/Infineon/psoc6cm0p
  */
 /* The size of the Cortex-M0+ application image */
-define symbol FLASH_CM0P_SIZE  = 0x20000;
+define symbol FLASH_CM0P_SIZE  = 0x2000;
 
 define memory mem with size = 4G;
 define region IROM1_region = mem:[from __ICFEDIT_region_IROM1_start__ to __ICFEDIT_region_IROM1_end__];

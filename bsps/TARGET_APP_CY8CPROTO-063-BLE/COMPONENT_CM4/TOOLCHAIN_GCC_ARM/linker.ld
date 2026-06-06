@@ -1,10 +1,8 @@
-/*******************************************************************************
-* \file cy8c6xx7_cm4_dual_cm0p_bless.ld
+/***************************************************************************//**
+* \file cy8c6xx7_cm4_dual.ld
 * \version 2.95.1
 *
 * Linker file for the GNU C compiler.
-*
-* This linker script is modified from cy8c6xx7_cm4_dual.ld for CM0P_BLESS image.
 *
 * The main purpose of the linker script is to describe how the sections in the
 * input files should be mapped into the output file, and to control the memory
@@ -21,7 +19,8 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2016-2021 Cypress Semiconductor Corporation
+* (c) 2016-2026, Infineon Technologies AG or an affiliate of
+* Infineon Technologies AG.
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +41,15 @@ SEARCH_DIR(.)
 GROUP(-lgcc -lc -lnosys)
 ENTRY(Reset_Handler)
 
+/* The size of the stack section at the end of CM4 SRAM */
 STACK_SIZE = 0x1000;
+
+/* By default, the COMPONENT_CM0P_SLEEP prebuilt image is used for the CM0p core.
+* More about CM0+ prebuilt images, see here:
+* https://github.com/Infineon/psoc6cm0p
+*/
+/* The size of the Cortex-M0+ application image at the start of FLASH */
+FLASH_CM0P_SIZE  = 0x20000;
 
 /* Force symbol to be entered in the output file as an undefined symbol. Doing
 * this may, for example, trigger linking of additional modules from standard
@@ -64,7 +71,7 @@ MEMORY
      * Your changes must be aligned with the corresponding memory regions for CM0+ core in 'xx_cm0plus.ld',
      * where 'xx' is the device group; for example, 'cy8c6xx7_cm0plus.ld'.
      */
-    ram               (rwx)   : ORIGIN = 0x08003000, LENGTH = 0x044800
+    ram               (rwx)   : ORIGIN = 0x08002000, LENGTH = 0x45800
     flash             (rx)    : ORIGIN = 0x10000000, LENGTH = 0x100000
 
     /* This is a 32K flash region used for EEPROM emulation. This region can also be used as the general purpose flash.
@@ -83,13 +90,6 @@ MEMORY
     xip               (rx)    : ORIGIN = 0x18000000, LENGTH = 0x8000000    /* 128 MB */
     efuse             (r)     : ORIGIN = 0x90700000, LENGTH = 0x100000     /*   1 MB */
 }
-
-/* Size and start address of the Cortex-M0+ application image */
-FLASH_CM0P_SIZE  = 0x20000;
-FLASH_CM0P_START = ORIGIN(flash);
-/* Size and start address of the Cortex-M4 application image */
-FLASH_CM4_SIZE   = LENGTH(flash) - FLASH_CM0P_SIZE;
-FLASH_CM4_START  = FLASH_CM0P_START + FLASH_CM0P_SIZE;
 
 /* Library configurations */
 GROUP(libgcc.a libc.a libm.a libnosys.a)
@@ -130,8 +130,8 @@ GROUP(libgcc.a libc.a libm.a libnosys.a)
 
 SECTIONS
 {
-     /* Cortex-M0+ application image */
-    .cy_m0p_image FLASH_CM0P_START :
+     /* Cortex-M0+ application flash image area */
+    .cy_m0p_image ORIGIN(flash) :
     {
         . = ALIGN(4);
         __cy_m0p_code_start = . ;
@@ -141,8 +141,9 @@ SECTIONS
 
     /* Check if .cy_m0p_image size exceeds FLASH_CM0P_SIZE */
     ASSERT(__cy_m0p_code_end <= ORIGIN(flash) + FLASH_CM0P_SIZE, "CM0+ flash image overflows with CM4, increase FLASH_CM0P_SIZE")
-    /* Cortex-M4 application image */
-    .text FLASH_CM4_START :
+
+    /* Cortex-M4 application flash area */
+    .text ORIGIN(flash) + FLASH_CM0P_SIZE :
     {
         . = ALIGN(4);
         __Vectors = . ;
@@ -258,7 +259,6 @@ SECTIONS
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
         PROVIDE_HIDDEN (__init_array_end = .);
-
 
         . = ALIGN(4);
         /* finit data */

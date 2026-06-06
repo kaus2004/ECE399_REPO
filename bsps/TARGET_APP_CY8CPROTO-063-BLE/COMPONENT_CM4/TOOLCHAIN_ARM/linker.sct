@@ -3,7 +3,7 @@
 ; to pass a scatter file through a C preprocessor.
 
 ;*******************************************************************************
-;* \file cy8c6xx7_cm4_dual_cm0p_bless.sct
+;* \file cy8c6xx7_cm4_dual.sct
 ;* \version 2.95.1
 ;*
 ;* Linker file for the ARMCC.
@@ -11,8 +11,6 @@
 ;* The main purpose of the linker script is to describe how the sections in the
 ;* input files should be mapped into the output file, and to control the memory
 ;* layout of the output file.
-;*
-;* This linker script is modified from cy8c6xx7_cm4_dual.sct for CM0P_BLESS image.
 ;*
 ;* \note The entry point location is fixed and starts at 0x10000000. The valid
 ;* application image should be placed there.
@@ -28,7 +26,8 @@
 ;*
 ;*******************************************************************************
 ;* \copyright
-;* Copyright 2016-2021 Cypress Semiconductor Corporation
+;* (c) 2016-2026, Infineon Technologies AG or an affiliate of
+;* Infineon Technologies AG.
 ;* SPDX-License-Identifier: Apache-2.0
 ;*
 ;* Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,8 +53,8 @@
 ; Your changes must be aligned with the corresponding defines for CM0+ core in 'xx_cm0plus.scat',
 ; where 'xx' is the device group; for example, 'cy8c6xx7_cm0plus.scat'.
 ; RAM
-#define RAM_START               0x08003000
-#define RAM_SIZE                0x00044800
+#define RAM_START               0x08002000
+#define RAM_SIZE                0x00045800
 ; Flash
 #define FLASH_START             0x10000000
 #define FLASH_SIZE              0x00100000
@@ -67,8 +66,7 @@
 ; More about CM0+ prebuilt images, see here:
 ; https://github.com/Infineon/psoc6cm0p
 ; The size of the Cortex-M0+ application flash image
-; Size and start address of the Cortex-M0+ application image
-#define FLASH_CM0P_SIZE         0x20000
+#define FLASH_CM0P_SIZE         0x2000
 
 ; The following defines describe a 32K flash region used for EEPROM emulation.
 ; This region can also be used as the general purpose flash.
