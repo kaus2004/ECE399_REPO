@@ -23,6 +23,7 @@
 #include "cyhal_i2c.h"
 #include "cyhal_spi.h"
 #include "cy_retarget_io.h"
+// #include "task_console.h"
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -34,18 +35,21 @@
 #if defined(ECE353_FREERTOS)
 // /* FreeRTOS Includes */
 #include <FreeRTOS.h>
-// #include <event_groups.h>
-// #include <queue.h>
-// #include <semphr.h>
-// #include <task.h> MS ECE do for masters.
+#include <event_groups.h>
+#include <queue.h>
+#include <semphr.h>
+#include <task.h> //MS ECE do for masters.
 #endif
 
 /* This macro is used to determine if we are building an executable for example code or ICE code.
  * Only a single line should be uncommented at one time.  
 */
 // #define HW06
-#define MOTOR_TEST
-//#define MOTOR_PRIM
+//#define MOTOR_TEST
+#include "btstack_config.h"
+#define MOTOR_PRIM
+#define BLE_COMM
+
 
 extern char NAME[];
 extern char APP_DESCRIPTION[];
