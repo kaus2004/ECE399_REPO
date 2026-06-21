@@ -90,21 +90,12 @@ void app_init_hw(void)
 
 void app_main(void)
 {
-    printf("[RUN] app_main entered. Starting continuous forward drive loop.\r\n");
+    printf("[RUN] app_main entered. Starting BLE + rover command loop.\r\n");
+    // ble_comm_start();
 
     while (1)
     {
-        motor_turn_rightF();
         cyhal_gpio_toggle(CYBSP_USER_LED);
-        printf("[RUN] Forward command active. LED toggled.\r\n");
-        cyhal_system_delay_ms(500);
-        motor_stop_all();
-
-        cyhal_system_delay_ms(1000);
-        // motor_backward();
-
-        cyhal_gpio_toggle(CYBSP_USER_LED);
-        printf("[RUN] Backward command active. LED toggled.\r\n");
         cyhal_system_delay_ms(500);
     }
 }
@@ -150,6 +141,38 @@ void motor_stop_all(void)
     cyhal_gpio_write(M1_IN2, false);
 }
 
+void rover_execute_command(char cmd)
+{
+    switch (cmd)
+    {
+        case 'w':
+            printf("Forward\n");
+            motor_forward();
+            break;
+        case 's':
+            printf("Backward\n");
+            motor_backward();
+            break;
+        case 'a':
+            printf("Turn left\n");
+            motor_turn_rightF();
+            break;
+        case 'd':
+            printf("Turn right\n");
+            motor_turn_leftF();
+            break;
+        case 'x':
+            printf("Stop\n");
+            motor_stop_all();
+            break;
+        default:
+            if ((unsigned char)cmd > 32u) {
+                printf("Unknown command: %c\n", cmd);
+            }
+            break;
+    }
+}
+
 
 
 
@@ -172,32 +195,7 @@ void motor_uart_control(void)
     {
         cmd = getchar(); // Blocking read from UART terminal
 
-        switch (cmd)
-        {
-            case 'w':
-                printf("Forward\n");
-                motor_forward();
-                break;
-            case 's':
-                printf("Backward\n");
-                motor_backward();
-                break;
-            case 'a':
-                printf("Turn left\n");
-                motor_turn_rightF();
-                break;
-            case 'd':
-                printf("Turn right\n");
-                motor_turn_leftF();
-                break;
-            case 'x':
-                printf("Stop\n");
-                motor_stop_all();
-                break;
-            default:
-                printf("Unknown command: %c\n", cmd);
-                break;
-        }
+        rover_execute_command(cmd);
     }
 }
 #endif

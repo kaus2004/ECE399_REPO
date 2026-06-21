@@ -1,16 +1,25 @@
+
 #ifndef BTSTACK_CONFIG_H
 #define BTSTACK_CONFIG_H
-#define HAVE_AES128
-#define HAVE_BTSTACK_STDIN
-#define HAVE_LWIP
-#define HAVE_MALLOC
-#define MBEDTLS_ECC_P256
 
-#define ENABLE_BLE
-#define ENABLE_CLASSIC
-#define ENABLE_LE_CENTRAL
-#define ENABLE_LE_PERIPHERAL
-#define ENABLE_LOG_INFO
-#define ENABLE_PRINTF_HEXDUMP
+#include "main.h"
+#include "cybt_platform_config.h"
+#include "wiced_bt_stack.h"
+#include "wiced_bt_gatt.h"
+#include "wiced_memory.h"
+#include "wiced_bt_dev.h"
+#include "wiced_bt_ble.h"
+#include "motor_prim.h"
+
+extern const wiced_bt_cfg_settings_t settings_cfg;
+void ble_comm_start(void);
+
+wiced_bt_gatt_status_t app_bt_gatt_callback(
+    wiced_bt_gatt_evt_t event,
+    wiced_bt_gatt_event_data_t *p_event_data
+);
+
+void ble_start_advertising(void);
+// wiced_result_t app_bt_management_callback()
 
 #endif /* BTSTACK_CONFIG_H */
