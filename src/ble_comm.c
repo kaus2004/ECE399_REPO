@@ -1,6 +1,14 @@
 #include "btstack_config.h"
 #if defined(BLE_COMM)
 
+static cybt_platform_config_t bt_platform_cfg =
+{
+    .hci_config =
+    {
+        .hci_transport = CYBT_HCI_IPC
+    }
+};
+
 static const wiced_bt_cfg_gatt_t gatt_cfg =
 {
     .max_db_service_modules = 1,
@@ -77,7 +85,7 @@ static const wiced_bt_cfg_ble_t ble_cfg =
 
 const wiced_bt_cfg_settings_t settings_cfg =
 {
-    .device_name = (uint8_t *)"WALL-E Rover",
+    .device_name = (uint8_t *)"RoachRover",
     .security_required = BTM_SEC_BEST_EFFORT,
     .p_br_cfg = NULL,
     .p_ble_cfg = &ble_cfg,
@@ -85,26 +93,37 @@ const wiced_bt_cfg_settings_t settings_cfg =
     .p_isoc_cfg = NULL,
     .p_l2cap_app_cfg = NULL
 };
-wiced_result_t p_bt_management_cback(wiced_bt_management_evt_t event, wiced_bt_management_evt_data_t *p_event_data){
+
+wiced_result_t p_bt_management_cback(wiced_bt_management_evt_t event, wiced_bt_management_evt_data_t *p_event_data)
+{
+
     //write task console printf later
+    //printf("Event:%s\n", get_btm_event_name(event));
     printf("[BT] Event = %d\r\n", event);
     switch(event){
         case BTM_ENABLED_EVT:
-            printf("[BT] Bluetooth stack enabled\n");
+            printf("[BT] BTM_ENABLED_EVT received\r\n");
             if (p_event_data->enabled.status == WICED_BT_SUCCESS)
             {
-                printf("[BT] Bluetooth stack enabled successfully\n");
+                printf("[BT] Bluetooth stack enabled successfully\r\n");
+                wiced_bt_gatt_register(app_bt_gatt_callback);
+                ble_start_advertising();
             }
             else
             {
-                printf("[BT] Bluetooth stack failed to enable, status: %d\n", p_event_data->enabled.status);
+                printf("[BT] Bluetooth stack failed to enable, status=%d\r\n", p_event_data->enabled.status);
             }
-            // return WICED_BT_SUCCESS;
-            wiced_bt_gatt_register(app_bt_gatt_callback);
-            ble_start_advertising();
             break;
         case BTM_DISABLED_EVT:
             printf("[BT] Bluetooth stack disabled\n");
+            break;
+        case BTM_LOCAL_IDENTITY_KEYS_REQUEST_EVT:
+            /* No stored keys — tell the stack to generate new ones */
+            printf("[BT] BTM_LOCAL_IDENTITY_KEYS_REQUEST_EVT: no stored keys\r\n");
+            return WICED_BT_ERROR;
+        case BTM_LOCAL_IDENTITY_KEYS_UPDATE_EVT:
+            /* Stack generated new keys — store them if you have NV memory */
+            printf("[BT] BTM_LOCAL_IDENTITY_KEYS_UPDATE_EVT: new keys generated\r\n");
             break;
         default:
             printf("[BT] Unhandled event: %d\n", event);
@@ -116,16 +135,12 @@ wiced_result_t p_bt_management_cback(wiced_bt_management_evt_t event, wiced_bt_m
 
 void ble_comm_start(void)
 {
+    cy_rslt_t platform_config_result = CY_RSLT_SUCCESS;
+
     printf("[BT] ble_comm_start ENTERED\r\n");
-    cybt_platform_config_t bt_platform_cfg =
-    {
-        .hci_config =
-        {
-            .hci_transport = CYBT_HCI_IPC
-        }
-    };
 
     cybt_platform_config_init(&bt_platform_cfg);
+    printf("[BT] cybt_platform_config_init result=%ld (void API)\r\n", (long)platform_config_result);
 
     printf("[BT] Platform config initialized using IPC\r\n");
 
@@ -135,10 +150,9 @@ void ble_comm_start(void)
      *
      * But app_bt_management_callback still needs to be defined.
      */
-    printf("[BT] Platform config initialized using IPC\r\n");
     printf("[BT] before wiced_bt_stack_init\r\n");
     wiced_result_t result = wiced_bt_stack_init(p_bt_management_cback,&settings_cfg);
-    printf("[BT] wiced_bt_stack_init result=%d\r\n", result);
+    printf("[BT] after wiced_bt_stack_init result=%d\r\n", result);
     if(result == WICED_BT_SUCCESS)
     {
         printf("[BT] Bluetooth stack initialization successful\r\n");
@@ -148,6 +162,11 @@ void ble_comm_start(void)
     {
         printf("[BT] Bluetooth stack initialization failed, result: %d\r\n", result);
     }
+
+    vTaskStartScheduler();
+    
+    /* Should never get here*/
+    CY_ASSERT(0);
     
 }
 
@@ -234,8 +253,8 @@ void ble_start_advertising(void)
         },
         {
             .advert_type = BTM_BLE_ADVERT_TYPE_NAME_COMPLETE,
-            .len = sizeof("WALL-E Rover") - 1,
-            .p_data = (uint8_t *)"WALL-E Rover"
+            .len = sizeof("RoachRover") - 1,
+            .p_data = (uint8_t *)"RoachRover"
         }
     };
 
