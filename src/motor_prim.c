@@ -102,9 +102,7 @@ void app_main(void)
     ble_comm_start();
 #endif
 
-    xTaskCreate(rover_task, "rover", 4096, NULL, 1, NULL);
-
-    vTaskStartScheduler();
+    //xTaskCreate(rover_task, "rover", 4096, NULL, 1, NULL);
 
     while (1)
     {
