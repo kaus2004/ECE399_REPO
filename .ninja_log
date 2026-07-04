@@ -283,3 +283,17 @@
 54072	56358	8045793462716407	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/libraries_shared/serial-flash/cy_serial_flash_qspi.o	ce595768de10489d
 53909	56465	8045793461158310	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/libraries_shared/retarget-io/source/cy_retarget_io.o	45e721adb8338440
 56466	57637	8045793486671894	build/APP_CY8CPROTO-063-BLE/Debug/mtb-example-btstack-freertos-hello-sensor.elf	9fa1f8d071155bdd
+182	1140	8048482633426281	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/source/app_bt/app_bt_gatt_handler.o	326a38574d90ef2a
+1141	2360	8048482643010101	build/APP_CY8CPROTO-063-BLE/Debug/mtb-example-btstack-freertos-hello-sensor.elf	9fa1f8d071155bdd
+63	1060	8048501446546117	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/source/app_bt/app_bt_gatt_handler.o	326a38574d90ef2a
+1060	1897	8048501456518946	build/APP_CY8CPROTO-063-BLE/Debug/mtb-example-btstack-freertos-hello-sensor.elf	9fa1f8d071155bdd
+74	825	8048946001430863	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/GeneratedSource/cycfg_gap.o	d43131ea4a9f5f9f
+81	1090	8048946001461045	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/GeneratedSource/cycfg_gatt_db.o	cca51025a1068822
+66	1215	8048946001295805	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/GeneratedSource/cycfg_bt_settings.o	619199f5fbb86643
+101	1251	8048946001698334	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/source/app_hw/app_hw_device.o	8e79122be7d21663
+110	1373	8048946001788824	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/source/main.o	2ca68ec926e48d52
+88	1423	8048946001559476	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/source/app_bt/app_bt_event_handler.o	4d4c4a6c516fd331
+94	1485	8048946001629550	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/source/app_bt/app_bt_gatt_handler.o	326a38574d90ef2a
+1485	2580	8048946015492941	build/APP_CY8CPROTO-063-BLE/Debug/mtb-example-btstack-freertos-hello-sensor.elf	9fa1f8d071155bdd
+82	1309	8048967597397330	C:/Users/Patron/WallE/Bluetooth_LE_Hello_Sensor/build/Debug/local/source/app_bt/app_bt_gatt_handler.o	326a38574d90ef2a
+1309	2449	8048967609662562	build/APP_CY8CPROTO-063-BLE/Debug/mtb-example-btstack-freertos-hello-sensor.elf	9fa1f8d071155bdd

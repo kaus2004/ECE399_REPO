@@ -62,6 +62,10 @@
 #endif
 
 /*******************************************************************************
+ * Macro Definitions
+ ******************************************************************************/
+
+/*******************************************************************************
  * Function Definitions
  ******************************************************************************/
 /**
@@ -623,6 +627,41 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                     }
                     break;
 
+                case HDLC_HELLO_SENSOR_KEY_INPUT_VALUE:
+                    if (len != 1)
+                    {
+                        return WICED_BT_GATT_INVALID_ATTR_LEN;
+                    }
+                    {
+                        uint8_t key_value = p_attr[0];
+                        printf("Key Input received: %c (0x%02x)\n", key_value, key_value);
+                        
+                        /* Process movement commands */
+                        switch(key_value)
+                        {
+                            case 'w':
+                            case 'W':
+                                printf("Movement: UP\n");
+                                break;
+                            case 'a':
+                            case 'A':
+                                printf("Movement: LEFT\n");
+                                break;
+                            case 's':
+                            case 'S':
+                                printf("Movement: DOWN\n");
+                                break;
+                            case 'd':
+                            case 'D':
+                                printf("Movement: RIGHT\n");
+                                break;
+                            default:
+                                printf("Unknown key: %c\n", key_value);
+                                break;
+                        }
+                    }
+                    break;
+
                 case HDLD_GATT_SERVICE_CHANGED_CLIENT_CHAR_CONFIG:
                     gatt_status = WICED_BT_GATT_SUCCESS;
                     break;
@@ -649,6 +688,42 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
          * snippet, then set the result using: res = WICED_BT_GATT_SUCCESS; */
         switch(attr_handle)
         {
+            case HDLC_HELLO_SENSOR_KEY_INPUT_VALUE:
+                if (len != 1)
+                {
+                    return WICED_BT_GATT_INVALID_ATTR_LEN;
+                }
+                {
+                    uint8_t key_value = p_attr[0];
+                    printf("Key Input received: %c (0x%02x)\n", key_value, key_value);
+                    
+                    /* Process movement commands */
+                    switch(key_value)
+                    {
+                        case 'w':
+                        case 'W':
+                            printf("Movement: UP\n");
+                            break;
+                        case 'a':
+                        case 'A':
+                            printf("Movement: LEFT\n");
+                            break;
+                        case 's':
+                        case 'S':
+                            printf("Movement: DOWN\n");
+                            break;
+                        case 'd':
+                        case 'D':
+                            printf("Movement: RIGHT\n");
+                            break;
+                        default:
+                            printf("Unknown key: %c\n", key_value);
+                            break;
+                    }
+                    gatt_status = WICED_BT_GATT_SUCCESS;
+                }
+                break;
+                
             default:
                 /* The write operation was not performed for the
                  * indicated handle */
