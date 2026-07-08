@@ -58,6 +58,10 @@
 #include "app_bt_gatt_handler.h"
 #include "app_hw_device.h"
 #include "app_bt_utils.h"
+
+//Testing in main.c
+#define MOTOR_PRIM
+#include "motor_prim.h"
 #ifdef ENABLE_BT_SPY_LOG
 #include "cybt_debug_uart.h"
 #endif

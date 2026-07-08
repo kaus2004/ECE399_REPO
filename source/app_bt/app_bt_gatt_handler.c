@@ -57,6 +57,8 @@
 #include "app_bt_event_handler.h"
 #include "app_bt_gatt_handler.h"
 #include "app_hw_device.h"
+#include "motor_prim.h"
+#define MOTOR_PRIM
 #ifdef ENABLE_BT_SPY_LOG
 #include "cybt_debug_uart.h"
 #endif
@@ -642,23 +644,39 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                             case 'w':
                             case 'W':
                                 printf("Movement: UP\n");
+                                prim_motor_forward();
                                 break;
                             case 'a':
+                                printf("Movement: Fast LEFT\n");
+                                prim_motor_turn_leftF();
+                                break;
                             case 'A':
                                 printf("Movement: LEFT\n");
+                                prim_motor_turn_left();
                                 break;
                             case 's':
                             case 'S':
                                 printf("Movement: DOWN\n");
+                                prim_motor_backward();
                                 break;
                             case 'd':
+                                printf("Movement: RIGHT\n");
+                                prim_motor_turn_rightF();
+                                break;
                             case 'D':
                                 printf("Movement: RIGHT\n");
+                                prim_motor_turn_right();
+                                break;
+                            case 'b':
+                            case 'B':
+                                printf("Movement: STOP\n");
+                                prim_motor_stop_all();
                                 break;
                             default:
                                 printf("Unknown key: %c\n", key_value);
                                 break;
                         }
+                        gatt_status = WICED_BT_GATT_SUCCESS;
                     }
                     break;
 
@@ -703,18 +721,33 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                         case 'w':
                         case 'W':
                             printf("Movement: UP\n");
+                            prim_motor_forward();
                             break;
                         case 'a':
+                            printf("Movement: Fast LEFT\n");
+                            prim_motor_turn_leftF();
+                            break;
                         case 'A':
                             printf("Movement: LEFT\n");
+                            prim_motor_turn_left();
                             break;
                         case 's':
                         case 'S':
                             printf("Movement: DOWN\n");
+                            prim_motor_backward();
                             break;
                         case 'd':
+                            printf("Movement: RIGHT\n");
+                            prim_motor_turn_rightF();
+                            break;
                         case 'D':
                             printf("Movement: RIGHT\n");
+                            prim_motor_turn_right();
+                            break;
+                        case 'b':
+                        case 'B':
+                            printf("Movement: STOP\n");
+                            prim_motor_stop_all();
                             break;
                         default:
                             printf("Unknown key: %c\n", key_value);
