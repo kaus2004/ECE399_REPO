@@ -258,3 +258,9 @@ Important topics learned included:
 Perhaps the most significant lesson was recognizing when to stop debugging an increasingly complex implementation and instead validate functionality using a known-good reference application before integrating custom software.
 
 This approach ultimately resulted in a functioning Bluetooth-controlled rover while providing a much deeper understanding of the AIROC BLE software stack than would have been obtained by simply following a tutorial.
+
+# Links
+https://learn.adafruit.com/introduction-to-bluetooth-low-energy/gatt
+https://github.com/Infineon/mtb-example-btstack-freertos-hello-sensor/blob/master/source
+
+
