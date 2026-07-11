@@ -68,20 +68,20 @@ void app_init_hw(void)
 {
 	cy_rslt_t result;
 
-	result = cybsp_init();
-	if (result != CY_RSLT_SUCCESS)
-	{
-		CY_ASSERT(0);
-	}
+	// result = cybsp_init();
+	// if (result != CY_RSLT_SUCCESS)
+	// {
+	// 	CY_ASSERT(0);
+	// }
 
-	__enable_irq();
+	// __enable_irq();
 
-	result = cy_retarget_io_init_fc(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
-			CYBSP_DEBUG_UART_CTS, CYBSP_DEBUG_UART_RTS, CY_RETARGET_IO_BAUDRATE);
-	if (result != CY_RSLT_SUCCESS)
-	{
-		CY_ASSERT(0);
-	}
+	// result = cy_retarget_io_init_fc(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
+	// 		CYBSP_DEBUG_UART_CTS, CYBSP_DEBUG_UART_RTS, CY_RETARGET_IO_BAUDRATE);
+	// if (result != CY_RSLT_SUCCESS)
+	// {
+	// 	CY_ASSERT(0);
+	// }
 
 	printf("[INIT] reset_cause=0x%lx\r\n", (unsigned long)Cy_SysLib_GetResetReason());
 	Cy_SysLib_ClearResetReason();
@@ -99,20 +99,6 @@ void app_init_hw(void)
 	printf("[INIT] app_init_hw complete. LED and motor pins initialized.\r\n");
 }
 
-void app_main(void)
-{
-	printf("[RUN] app_main entered.\r\n");
-
-#if defined(BLE_COMM)
-    ble_comm_start();
-#endif
-
-    //xTaskCreate(rover_task, "rover", 4096, NULL, 1, NULL);
-
-    while (1)
-    {
-    }
-}
 void rover_task(void *arg)
 {
 	(void) arg;
