@@ -46,13 +46,7 @@
 */
 // #define HW06
 //#define MOTOR_TEST
-#include "btstack_config.h"
 #define MOTOR_PRIM
-#define BLE_COMM
-
-
-extern char NAME[];
-extern char APP_DESCRIPTION[];
 
 /**
  * @brief 
@@ -64,6 +58,8 @@ extern char APP_DESCRIPTION[];
  */
 void app_init_hw(void);
 
+void app_main(void);
+
 /*****************************************************************************/
 /* Application Code                                                          */
 /*****************************************************************************/
@@ -74,6 +70,6 @@ void app_init_hw(void);
  * This function is implemented in the iceXX.c file for the ICE you are 
  * working on.
  */
-void app_main(void);
+//void app_main(void);
 
 #endif

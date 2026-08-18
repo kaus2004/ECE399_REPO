@@ -90,13 +90,12 @@ void app_init_hw(void)
 
 void app_main(void)
 {
-    printf("[RUN] app_main entered. Starting BLE + rover command loop.\r\n");
-    // ble_comm_start();
+    printf("Distance Sensor Test Application Start\r\n");
 
     while (1)
     {
         cyhal_gpio_toggle(CYBSP_USER_LED);
-        cyhal_system_delay_ms(500);
+        cyhal_system_delay_ms(1000);
     }
 }
 

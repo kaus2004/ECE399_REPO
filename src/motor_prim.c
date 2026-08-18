@@ -78,9 +78,6 @@ void app_init_hw(void)
 		CY_ASSERT(0);
 	}
 
-	printf("[INIT] reset_cause=0x%lx\r\n", (unsigned long)Cy_SysLib_GetResetReason());
-	Cy_SysLib_ClearResetReason();
-
 	result = cyhal_gpio_init(CYBSP_USER_LED,
 							 CYHAL_GPIO_DIR_OUTPUT,
 							 CYHAL_GPIO_DRIVE_STRONG,
@@ -90,23 +87,19 @@ void app_init_hw(void)
 		CY_ASSERT(0);
 	}
 
-	prim_motor_gpio_init();
-	printf("[INIT] app_init_hw complete. LED and motor pins initialized.\r\n");
+	printf("\x1b[2J\x1b[;H");
+	printf("[INIT] app_init_hw complete. UART and LED initialized.\r\n");
 }
 
 void app_main(void)
 {
-	printf("[RUN] app_main entered.\r\n");
+	printf("Distance Sensor Test Application Start\r\n");
 
-#if defined(BLE_COMM)
-    ble_comm_start();
-#endif
-
-    //xTaskCreate(rover_task, "rover", 4096, NULL, 1, NULL);
-
-    while (1)
-    {
-    }
+	while (1)
+	{
+		cyhal_gpio_toggle(CYBSP_USER_LED);
+		cyhal_system_delay_ms(1000);
+	}
 }
 void rover_task(void *arg)
 {

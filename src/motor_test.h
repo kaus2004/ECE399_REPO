@@ -23,5 +23,4 @@ void motor_turn_rightF(void);  // Left backward, right forward
 void motor_test_loop(void);
 void motor_uart_control(void);
 void rover_execute_command(char cmd);
-void ble_comm_start(void);
 #endif // MOTOR_TEST_H
