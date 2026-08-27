@@ -263,4 +263,10 @@ This approach ultimately resulted in a functioning Bluetooth-controlled rover wh
 https://learn.adafruit.com/introduction-to-bluetooth-low-energy/gatt
 https://github.com/Infineon/mtb-example-btstack-freertos-hello-sensor/blob/master/source
 
+# How to Fix a broken pull Request
+Method1: Refer to this guide https://community.infineon.com/t5/ModusToolbox/Libraries-quot-recipe-make-quot-not-found-but-it-definitely-exists-here/td-p/861094?utm_source=chatgpt.com#.
+When certain core-make or make-receipt is not available, importing from library manager and then resolving the duplicate dependencies is the solution. 
+
+Method2: Automate Method1 by adding it in the makefile.
+
 
