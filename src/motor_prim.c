@@ -89,6 +89,14 @@ void app_init_hw(void)
 
 	printf("\x1b[2J\x1b[;H");
 	printf("[INIT] app_init_hw complete. UART and LED initialized.\r\n");
+
+	//I2C initialization for the distance sensor would go here.
+	cyhal_i2c_t *dist_i2c = proto_i2c_init(SDA_1, SCL_1);
+	if (!vl53l3cx_test_connection(dist_i2c)) {
+		printf("Distance sensor not detected!\r\n");
+		CY_ASSERT(0);
+	}
+	
 }
 
 void app_main(void)

@@ -2,6 +2,7 @@
 #define MOTOR_PRIM_H
 
 #include "main.h"
+#include "dist_sens.h"
 
 void prim_motor_gpio_init(void);
 void prim_motor_stop_all(void);
