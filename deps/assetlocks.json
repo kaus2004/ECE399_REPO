@@ -5,11 +5,11 @@
     },
     {
         "asset-name": "btstack",
-        "locked-commit": "release-v4.1.5"
+        "locked-commit": "release-v5.0.6"
     },
     {
         "asset-name": "cat1cm0p",
-        "locked-commit": "release-v1.11.0"
+        "locked-commit": "release-v1.10.0"
     },
     {
         "asset-name": "clib-support",
@@ -41,7 +41,7 @@
     },
     {
         "asset-name": "mtb-pdl-cat1",
-        "locked-commit": "release-v3.22.1"
+        "locked-commit": "release-v3.21.1"
     },
     {
         "asset-name": "recipe-make-cat1a",

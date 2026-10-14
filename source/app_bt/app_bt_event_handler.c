@@ -105,11 +105,13 @@ app_bt_management_callback(wiced_bt_management_evt_t event, wiced_bt_management_
     wiced_bt_device_address_t local_bda = {0x00, 0xA0, 0x50,
                                            0x011, 0x44, 0x55};
 
+    printf("[BTDBG] management event=%d\n", (int)event);
     printf("Event:%s\n", get_btm_event_name(event));
 
     switch (event)
     {
         case BTM_ENABLED_EVT:
+            printf("[BTDBG] entered BTM_ENABLED_EVT\n");
             /* Bluetooth Controller and Host Stack Enabled */
             if (WICED_BT_SUCCESS == p_event_data->enabled.status)
             {
@@ -366,9 +368,11 @@ void app_bt_application_init(void)
 
     /* Start Undirected LE Advertisements on device startup.
      * The corresponding parameters are contained in 'app_bt_cfg.c' */
+        printf("[BTDBG] starting advertising\n");
     result = wiced_bt_start_advertisements(BTM_BLE_ADVERT_UNDIRECTED_HIGH,
                                            0,
                                            NULL);
+        printf("[BTDBG] advertising result=%d\n", (int)result);
 
     /* Failed to start advertisement. Stop program execution */
     if (WICED_BT_SUCCESS != result)

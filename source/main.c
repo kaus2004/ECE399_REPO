@@ -127,11 +127,9 @@ int main()
     /* Check if stack initialization was successful */
     if(WICED_BT_SUCCESS == wiced_result)
     {
-        printf("Bluetooth Stack Initialization Successful \n");
     }
     else
     {
-        printf("Bluetooth Stack Initialization failed!! \n");
         CY_ASSERT(0);
     }
 
