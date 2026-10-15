@@ -59,6 +59,7 @@
 #include "app_bt_gatt_handler.h"
 #include "app_hw_device.h"
 #include "app_bt_utils.h"
+#include "dist_sens.h"
 #ifdef ENABLE_BT_SPY_LOG
 #include "cybt_debug_uart.h"
 #endif
@@ -66,6 +67,26 @@
 /******************************************************************************
  * Function Definitions
  ******************************************************************************/
+
+void app_init_hw(void)
+{
+    cyhal_i2c_t *sensor_i2c = NULL;
+
+    prim_motor_gpio_init();
+
+    sensor_i2c = proto_i2c_init(SDA_1, SCL_1);
+    if (sensor_i2c == NULL)
+    {
+        CY_ASSERT(0);
+    }
+
+    if (!dist_sens_st_init())
+    {
+        CY_ASSERT(0);
+    }
+
+    printf("[INIT] BLE app hardware setup complete. Motor pins and distance sensor initialized.\r\n");
+}
 
 /**
  * Function Name : main
