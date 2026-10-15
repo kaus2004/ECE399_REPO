@@ -109,27 +109,18 @@ void rover_safety_task(void *arg)
     }
     printf("[SENSOR] VL53 initialized\r\n");
 
-    if (!dist_sens_st_configure_gpio1_interrupt())
-    {
-        printf("[SENSOR] GPIO1 interrupt configuration failed\r\n");
-        prim_motor_stop_all();
-        vTaskDelete(NULL);
-        return;
-    }
-    printf("[SENSOR] GPIO1 interrupt configured\r\n");
-
     while (1)
     {
-        if (dist_sens_st_try_read_distance(&distance_mm))
+        if (!dist_sens_st_poll_distance_mm(&distance_mm))
         {
-            if (distance_mm < ROVER_STOP_DISTANCE_MM)
-            {
-                printf("[SAFETY] Obstacle <100 mm - STOP\r\n");
-                prim_motor_stop_all();
-            }
+            printf("[DIST] invalid / failed read\r\n");
+        }
+        else
+        {
+            printf("[DIST] %u mm\r\n", distance_mm);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
