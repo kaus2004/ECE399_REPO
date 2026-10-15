@@ -20,6 +20,7 @@ bool vl53l3cx_test_connection(cyhal_i2c_t *obj);
 bool dist_sens_st_init(void);
 void dist_sens_st_shutdown(void);
 bool dist_sens_st_configure_gpio1_interrupt(void);
+bool dist_sens_st_try_read_distance(uint16_t *distance_mm);
 bool dist_sens_st_read_distance_from_interrupt(uint16_t *distance_mm);
 bool dist_sens_st_poll_distance_mm(uint16_t *distance_mm);
 bool dist_sens_st_identity_test(void);

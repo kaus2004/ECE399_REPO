@@ -3,6 +3,7 @@
  * coexist with motor_test.c without duplicate symbol conflicts.
  */
 #include "motor_prim.h"
+#include "dist_sens.h"
 #include "cyhal_gpio.h"
 #include "cybsp.h"
 #include <FreeRTOS.h>
@@ -16,6 +17,7 @@
 #define M0_IN2 P7_2
 #define M1_IN1 P5_6
 #define M1_IN2 P10_6
+#define ROVER_STOP_DISTANCE_MM 100U
 
 void prim_motor_forward(void)
 {
@@ -76,6 +78,58 @@ void rover_task(void *arg)
         printf("[RUN] Waiting for BLE commands...\r\n");
 
         vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
+
+void rover_safety_task(void *arg)
+{
+    uint16_t distance_mm = 0U;
+    cyhal_i2c_t *sensor_i2c = NULL;
+
+    (void)arg;
+
+    printf("[SENSOR] Task started\r\n");
+
+    sensor_i2c = proto_i2c_init(SDA_1, SCL_1);
+    if (sensor_i2c == NULL)
+    {
+        printf("[SENSOR] I2C initialization failed\r\n");
+        prim_motor_stop_all();
+        vTaskDelete(NULL);
+        return;
+    }
+    printf("[SENSOR] I2C initialized\r\n");
+
+    if (!dist_sens_st_init())
+    {
+        printf("[SENSOR] VL53 initialization failed\r\n");
+        prim_motor_stop_all();
+        vTaskDelete(NULL);
+        return;
+    }
+    printf("[SENSOR] VL53 initialized\r\n");
+
+    if (!dist_sens_st_configure_gpio1_interrupt())
+    {
+        printf("[SENSOR] GPIO1 interrupt configuration failed\r\n");
+        prim_motor_stop_all();
+        vTaskDelete(NULL);
+        return;
+    }
+    printf("[SENSOR] GPIO1 interrupt configured\r\n");
+
+    while (1)
+    {
+        if (dist_sens_st_try_read_distance(&distance_mm))
+        {
+            if (distance_mm < ROVER_STOP_DISTANCE_MM)
+            {
+                printf("[SAFETY] Obstacle <100 mm - STOP\r\n");
+                prim_motor_stop_all();
+            }
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 }
 

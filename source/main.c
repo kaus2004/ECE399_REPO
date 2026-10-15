@@ -70,22 +70,8 @@
 
 void app_init_hw(void)
 {
-    cyhal_i2c_t *sensor_i2c = NULL;
-
     prim_motor_gpio_init();
-
-    sensor_i2c = proto_i2c_init(SDA_1, SCL_1);
-    if (sensor_i2c == NULL)
-    {
-        CY_ASSERT(0);
-    }
-
-    if (!dist_sens_st_init())
-    {
-        CY_ASSERT(0);
-    }
-
-    printf("[INIT] BLE app hardware setup complete. Motor pins and distance sensor initialized.\r\n");
+    printf("[INIT] BLE app hardware setup complete. Motor pins initialized.\r\n");
 }
 
 /**
@@ -137,6 +123,8 @@ int main()
     }
     #endif //ENABLE_BT_SPY_LOG
 
+    app_init_hw();
+
 
 
     printf("******************** "
@@ -155,11 +143,23 @@ int main()
     app_kvstore_bd_config(&block_device);
 
     /* Initialize application hardware, including Rover motor pins */
-    app_init_hw();
+    //app_init_hw();
 
     /* Register call back and configuration with stack */
     wiced_result = wiced_bt_stack_init(app_bt_management_callback,
                                        &wiced_bt_cfg_settings);
+
+    BaseType_t task_result = xTaskCreate(rover_safety_task,
+                                        "rover_safety",
+                                        512U,
+                                        NULL,
+                                        3,
+                                        NULL);
+    if (task_result != pdPASS)
+    {
+        printf("[INIT] Failed to create rover safety task.\r\n");
+        CY_ASSERT(0);
+    }
 
     /* Check if stack initialization was successful */
     if(WICED_BT_SUCCESS == wiced_result)

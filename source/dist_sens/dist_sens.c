@@ -35,15 +35,15 @@ cyhal_i2c_t *proto_i2c_init(cyhal_gpio_t sda, cyhal_gpio_t scl)
     result = cyhal_i2c_init(&i2c_obj, sda, scl, NULL);
     if (result != CY_RSLT_SUCCESS)
     {
-        CY_ASSERT(0);
+        printf("[SENSOR] I2C init failed: %lu\r\n", (unsigned long)result);
         return NULL;
     }
 
     result = cyhal_i2c_configure(&i2c_obj, &vl53_i2c_config);
     if (result != CY_RSLT_SUCCESS)
     {
+        printf("[SENSOR] I2C configure failed: %lu\r\n", (unsigned long)result);
         cyhal_i2c_free(&i2c_obj);
-        CY_ASSERT(0);
         return NULL;
     }
 
@@ -345,6 +345,62 @@ bool dist_sens_st_configure_gpio1_interrupt(void)
                             true);
 
     return VL53LX_ClearInterruptAndStartMeasurement(&g_vl53_dev) == VL53LX_ERROR_NONE;
+}
+
+bool dist_sens_st_try_read_distance(uint16_t *distance_mm)
+{
+    VL53LX_MultiRangingData_t ranging_data;
+    VL53LX_Error status;
+
+    if (distance_mm == NULL)
+    {
+        return false;
+    }
+
+    if (!g_vl53_dev_initialized)
+    {
+        return false;
+    }
+
+    if (!g_dist_data_ready)
+    {
+        return false;
+    }
+
+    g_dist_data_ready = false;
+
+    status = VL53LX_GetMultiRangingData(&g_vl53_dev, &ranging_data);
+    if (status != VL53LX_ERROR_NONE)
+    {
+        printf("ST GetMultiRangingData failed: %d\r\n", (int)status);
+        return false;
+    }
+
+    if (ranging_data.NumberOfObjectsFound == 0U)
+    {
+        *distance_mm = 0U;
+        return false;
+    }
+
+    if (ranging_data.RangeData[0].RangeStatus != VL53LX_RANGESTATUS_RANGE_VALID &&
+        ranging_data.RangeData[0].RangeStatus != VL53LX_RANGESTATUS_RANGE_VALID_MIN_RANGE_CLIPPED &&
+        ranging_data.RangeData[0].RangeStatus != VL53LX_RANGESTATUS_RANGE_VALID_MERGED_PULSE)
+    {
+        printf("ST invalid range status: %u\r\n", ranging_data.RangeData[0].RangeStatus);
+        *distance_mm = 0U;
+        return false;
+    }
+
+    *distance_mm = (uint16_t)ranging_data.RangeData[0].RangeMilliMeter;
+
+    status = VL53LX_ClearInterruptAndStartMeasurement(&g_vl53_dev);
+    if (status != VL53LX_ERROR_NONE)
+    {
+        printf("ST re-arm failed: %d\r\n", (int)status);
+        return false;
+    }
+
+    return true;
 }
 
 bool dist_sens_st_read_distance_from_interrupt(uint16_t *distance_mm)

@@ -12,5 +12,6 @@ void prim_motor_turn_leftF(void);
 void prim_motor_test_loop(void);
 void prim_motor_uart_control(void);
 void rover_task(void *arg);
+void rover_safety_task(void *arg);
 
 #endif // MOTOR_PRIM_H

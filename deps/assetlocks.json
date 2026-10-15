@@ -25,7 +25,7 @@
     },
     {
         "asset-name": "core-make",
-        "locked-commit": "release-v3.9.0"
+        "locked-commit": "release-v3.10.0"
     },
     {
         "asset-name": "device-db",
