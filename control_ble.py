@@ -15,7 +15,7 @@ class BLEControllerApp:
         self.speed_boost = False
 
         self.root.title("Hello Device Controller")
-        self.root.geometry("350x450")
+        self.root.geometry("350x520")  # Slightly taller to fit the break button
 
         # Status Label
         self.status_label = tk.Label(root, text="Status: Disconnected", fg="red", font=("Arial", 12))
@@ -31,11 +31,11 @@ class BLEControllerApp:
             root, text="Speed Lock (Fast - Uppercase)", variable=self.speed_var, 
             command=self.toggle_speed, font=("Arial", 10, "bold")
         )
-        self.speed_check.pack(pady=15)
+        self.speed_check.pack(pady=10)
 
         # D-Pad Frame for Directional Arrows
         pad_frame = tk.Frame(root)
-        pad_frame.pack(pady=10)
+        pad_frame.pack(pady=5)
 
         self.btn_up = tk.Button(pad_frame, text="▲\n(W)", width=8, height=3, command=lambda: self.send_command('w'))
         self.btn_up.grid(row=0, column=1, padx=5, pady=5)
@@ -49,11 +49,16 @@ class BLEControllerApp:
         self.btn_right = tk.Button(pad_frame, text="►\n(D)", width=8, height=3, command=lambda: self.send_command('d'))
         self.btn_right.grid(row=1, column=2, padx=5, pady=5)
 
-        # Keyboard Bindings (W, A, S, D)
+        # Break / Stop Button
+        self.btn_break = tk.Button(root, text="BREAK / STOP\n(B)", width=24, height=2, command=lambda: self.send_command('b'), bg="lightcoral", font=("Arial", 10, "bold"))
+        self.btn_break.pack(pady=10)
+
+        # Keyboard Bindings (W, A, S, D, and B)
         self.root.bind("<w>", lambda event: self.send_command('w'))
         self.root.bind("<a>", lambda event: self.send_command('a'))
         self.root.bind("<s>", lambda event: self.send_command('s'))
         self.root.bind("<d>", lambda event: self.send_command('d'))
+        self.root.bind("<b>", lambda event: self.send_command('b'))
 
     def toggle_speed(self):
         self.speed_boost = self.speed_var.get()
