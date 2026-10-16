@@ -17,7 +17,9 @@
 #define M0_IN2 P7_2
 #define M1_IN1 P5_6
 #define M1_IN2 P10_6
-#define ROVER_STOP_DISTANCE_MM 100U
+#define STOP_DISTANCE_MM 130U
+
+static volatile bool g_obstacle_blocked = false;
 
 void prim_motor_forward(void)
 {
@@ -81,6 +83,22 @@ void rover_task(void *arg)
     }
 }
 
+void rover_safety_latch(void)
+{
+    if (!g_obstacle_blocked)
+    {
+        g_obstacle_blocked = true;
+        printf("[SAFETY] OBSTACLE <130 mm - MOTORS LOCKED\r\n");
+    }
+
+    prim_motor_stop_all();
+}
+
+bool rover_safety_is_blocked(void)
+{
+    return g_obstacle_blocked;
+}
+
 void rover_safety_task(void *arg)
 {
     uint16_t distance_mm = 0U;
@@ -111,13 +129,17 @@ void rover_safety_task(void *arg)
 
     while (1)
     {
-        if (!dist_sens_st_poll_distance_mm(&distance_mm))
-        {
-            printf("[DIST] invalid / failed read\r\n");
-        }
-        else
+        if (dist_sens_st_poll_distance_mm(&distance_mm))
         {
             printf("[DIST] %u mm\r\n", distance_mm);
+
+            if (distance_mm < STOP_DISTANCE_MM)
+            {
+                if (!rover_safety_is_blocked())
+                {
+                    rover_safety_latch();
+                }
+            }
         }
 
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -167,6 +189,13 @@ void prim_motor_stop_all(void)
 void prim_motor_execute_command(char cmd, bool fast)
 {
 	char base_cmd = (char)tolower((unsigned char)cmd);
+
+	if (rover_safety_is_blocked() && base_cmd != 'b' && base_cmd != 'x')
+	{
+		prim_motor_stop_all();
+		printf("[SAFETY] Command '%c' ignored - motors locked\r\n", cmd);
+		return;
+	}
 
 	switch (base_cmd)
 	{

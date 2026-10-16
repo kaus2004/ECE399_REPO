@@ -637,27 +637,57 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                         {
                             case 'w':
                             case 'W':
+                                if (rover_safety_is_blocked())
+                                {
+                                    printf("[SAFETY] Command '%c' ignored - motors locked\n", key_value);
+                                    break;
+                                }
                                 printf("Movement: UP\n");
                                 prim_motor_forward();
                                 break;
                             case 'a':
+                                if (rover_safety_is_blocked())
+                                {
+                                    printf("[SAFETY] Command '%c' ignored - motors locked\n", key_value);
+                                    break;
+                                }
                                 printf("Movement: Fast LEFT\n");
                                 prim_motor_turn_leftF();
                                 break;
                             case 'A':
+                                if (rover_safety_is_blocked())
+                                {
+                                    printf("[SAFETY] Command '%c' ignored - motors locked\n", key_value);
+                                    break;
+                                }
                                 printf("Movement: LEFT\n");
                                 prim_motor_turn_left();
                                 break;
                             case 's':
                             case 'S':
+                                if (rover_safety_is_blocked())
+                                {
+                                    printf("[SAFETY] Command '%c' ignored - motors locked\n", key_value);
+                                    break;
+                                }
                                 printf("Movement: DOWN\n");
                                 prim_motor_backward();
                                 break;
                             case 'd':
+                                if (rover_safety_is_blocked())
+                                {
+                                    printf("[SAFETY] Command '%c' ignored - motors locked\n", key_value);
+                                    break;
+                                }
                                 printf("Movement: RIGHT\n");
                                 prim_motor_turn_rightF();
                                 break;
                             case 'D':
+                                if (rover_safety_is_blocked())
+                                {
+                                    printf("[SAFETY] Command '%c' ignored - motors locked\n", key_value);
+                                    break;
+                                }
                                 printf("Movement: RIGHT\n");
                                 prim_motor_turn_right();
                                 break;
