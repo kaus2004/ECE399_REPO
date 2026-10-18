@@ -7,7 +7,7 @@
 #
 ################################################################################
 # \copyright
-# Copyright 2018-2024, Cypress Semiconductor Corporation (an Infineon company)
+# Copyright 2018-2025, Cypress Semiconductor Corporation (an Infineon company)
 # SPDX-License-Identifier: Apache-2.0
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ################################################################################
+
 
 
 ################################################################################
@@ -43,10 +44,7 @@ MTB_TYPE=COMBINED
 TARGET=APP_CY8CPROTO-063-BLE
 
 # Name of application (used to derive name of final linked file).
-#
-# If APPNAME is edited, ensure to update or regenerate launch
-# configurations for your IDE.
-APPNAME=mtb-example-hal-hello-world
+APPNAME=mtb-example-btstack-freertos-hello-sensor
 
 # Name of toolchain to use. Options include:
 #
@@ -70,6 +68,32 @@ CONFIG=Debug
 # If set to "true" or "1", display full command-lines when building.
 VERBOSE=
 
+# Optionally enable app and Bluetooth protocol traces and route to BTSpy
+# add airoc-hci-transport from library manager before enabling
+ENABLE_SPY_TRACES = 0
+# Specify the flash region to be used as NVRAM for bond data storage
+USE_INTERNAL_FLASH = 0
+
+ifeq ($(TARGET), $(filter $(TARGET), APP_CY8CKIT-062-BLE APP_CY8CPROTO-063-BLE APP_CYBLE-416045-EVAL))
+PSOC6_BLE = 1
+DEFINES+= PSOC6_BLE
+ENABLE_SPY_TRACES = 0
+USE_INTERNAL_FLASH = 1
+endif
+
+ifeq ($(TARGET), $(filter $(TARGET), APP_CY8CKIT-062-WIFI-BT APP_CYW9P62S1-43438EVB-01 APP_CYW9P62S1-43012EVB-01 APP_CY8CKIT-062S2-43012 APP_CY8CPROTO-062S3-4343W APP_CY8CEVAL-062S2-LAI-4373M2 APP_CY8CPROTO-062-4343W APP_CY8CEVAL-062S2-LAI-43439M2 APP_CY8CPROTO-062S2-43439 APP_CY8CEVAL-062S2-MUR-4373M2 APP_CY8CEVAL-062S2-MUR-4373EM2 APP_CY8CEVAL-062S2-CYW43022CUB APP_CY8CKIT-062S2-AI))
+USE_INTERNAL_FLASH = 1
+endif
+
+ifeq ($(ENABLE_SPY_TRACES),1)
+DEFINES+=ENABLE_BT_SPY_LOG DEBUG_UART_BAUDRATE=3000000
+else
+DEFINES+=ENABLE_AIROC_HCI_TRANSPORT_PRINTF=0
+endif
+
+ifeq ($(USE_INTERNAL_FLASH),1)
+DEFINES+=USE_INTERNAL_FLASH
+endif
 
 ################################################################################
 # Advanced Configuration
@@ -85,8 +109,7 @@ VERBOSE=
 # ... then code in directories named COMPONENT_foo and COMPONENT_bar will be
 # added to the build
 #
-COMPONENTS=FREERTOS WICED_BLE CM0P_BLESS
-
+COMPONENTS=FREERTOS WICED_BLE
 # Like COMPONENTS, but disable optional code that was enabled by default.
 DISABLE_COMPONENTS=
 
@@ -98,13 +121,13 @@ SOURCES=
 
 # Like SOURCES, but for include directories. Value should be paths to
 # directories (without a leading -I).
-INCLUDES=
+INCLUDES=./configs
 
 # Add additional defines to the build process (without a leading -D).
-DEFINES=
+DEFINES+=CY_RETARGET_IO_CONVERT_LF_TO_CRLF CY_RTOS_AWARE
 
 # Select softfp or hardfp floating point. Default is softfp.
-VFP_SELECT=hardfp
+VFP_SELECT=
 
 # Additional / custom C compiler flags.
 #
@@ -139,7 +162,6 @@ PREBUILD=
 # Custom post-build commands to run.
 POSTBUILD=
 
-
 ################################################################################
 # Paths
 ################################################################################
@@ -168,7 +190,7 @@ CY_GETLIBS_SHARED_NAME=mtb_shared
 #
 # The default depends on the selected TOOLCHAIN (GCC_ARM uses the ModusToolbox
 # software provided compiler by default).
-CY_COMPILER_GCC_ARM_DIR=
+CY_COMPILER_GCC_ARM_DIR?=
 
 
 # Locate ModusToolbox helper tools folders in default installation
