@@ -13,13 +13,20 @@
 #include <ctype.h>
 #include <stdio.h>
 
+#include "app_bt_gatt_handler.h"
+
 #define M0_IN1 P9_6
 #define M0_IN2 P7_2
 #define M1_IN1 P5_6
 #define M1_IN2 P10_6
 #define STOP_DISTANCE_MM 130U
+#define RECOVERY_REVERSE_MS 250U
+#define DIST_BLE_UPDATE_MS 100U
 
 static volatile bool g_obstacle_blocked = false;
+static volatile bool g_latest_distance_valid = false;
+static volatile uint16_t g_latest_distance_mm = 0U;
+static volatile TickType_t g_last_distance_ble_tx_tick = 0U;
 
 void prim_motor_forward(void)
 {
@@ -99,10 +106,30 @@ bool rover_safety_is_blocked(void)
     return g_obstacle_blocked;
 }
 
+void rover_safety_clear(void)
+{
+    g_obstacle_blocked = false;
+}
+
+void rover_recovery_reverse(void)
+{
+    if (!rover_safety_is_blocked())
+    {
+        return;
+    }
+
+    printf("[SAFETY] Recovery reverse - BACKWARD\r\n");
+    prim_motor_backward();
+    vTaskDelay(pdMS_TO_TICKS(RECOVERY_REVERSE_MS));
+    prim_motor_stop_all();
+    rover_safety_clear();
+}
+
 void rover_safety_task(void *arg)
 {
     uint16_t distance_mm = 0U;
     cyhal_i2c_t *sensor_i2c = NULL;
+    TickType_t now_ticks;
 
     (void)arg;
 
@@ -132,6 +159,8 @@ void rover_safety_task(void *arg)
         if (dist_sens_st_poll_distance_mm(&distance_mm))
         {
             printf("[DIST] %u mm\r\n", distance_mm);
+            g_latest_distance_mm = distance_mm;
+            g_latest_distance_valid = true;
 
             if (distance_mm < STOP_DISTANCE_MM)
             {
@@ -139,6 +168,16 @@ void rover_safety_task(void *arg)
                 {
                     rover_safety_latch();
                 }
+            }
+
+            now_ticks = xTaskGetTickCount();
+            if ((hello_sensor_state.conn_id != 0U) &&
+                (app_hello_sensor_distance_client_char_config[0] & GATT_CLIENT_CONFIG_NOTIFICATION) &&
+                ((now_ticks - g_last_distance_ble_tx_tick) >= pdMS_TO_TICKS(DIST_BLE_UPDATE_MS)))
+            {
+                app_bt_update_distance_value(distance_mm);
+                app_bt_send_distance_notification();
+                g_last_distance_ble_tx_tick = now_ticks;
             }
         }
 

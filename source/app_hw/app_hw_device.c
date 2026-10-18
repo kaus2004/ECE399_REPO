@@ -56,6 +56,7 @@
 #include "app_bt_event_handler.h"
 #include "app_bt_gatt_handler.h"
 #include "app_hw_device.h"
+#include "Rover/motor_prim.h"
 #ifdef ENABLE_BT_SPY_LOG
 #include "cybt_debug_uart.h"
 #endif
@@ -368,8 +369,14 @@ void button_task(void *arg)
             cyhal_gpio_write(CYBSP_USER_LED2 , CYBSP_LED_STATE_OFF);
             btn_press_duration = hello_sensor_state.timer_count_ms - btn_press_start;
 
+            if (rover_safety_is_blocked())
+            {
+                printf("[SAFETY] Recovery button pressed - reversing\n");
+                rover_recovery_reverse();
+                cyhal_gpio_write(CYBSP_USER_LED2 , CYBSP_LED_STATE_OFF);
+            }
             /* Check if button press is short */
-            if((btn_press_duration > APP_BTN_PRESS_SHORT_MIN) &&
+            else if((btn_press_duration > APP_BTN_PRESS_SHORT_MIN) &&
                (btn_press_duration <= APP_BTN_PRESS_SHORT_MAX))
             {
                 printf("Short button press is detected \n");

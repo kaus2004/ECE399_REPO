@@ -607,6 +607,19 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                     }
                     break;
 
+                case HDLD_HELLO_SENSOR_DISTANCE_CLIENT_CHAR_CONFIG:
+                    if (len != 2)
+                    {
+                        return WICED_BT_GATT_INVALID_ATTR_LEN;
+                    }
+                    app_hello_sensor_distance_client_char_config[0] = p_attr[0];
+                    app_hello_sensor_distance_client_char_config[1] = p_attr[1];
+                    printf("Distance CCCD updated: 0x%02x 0x%02x\n",
+                            app_hello_sensor_distance_client_char_config[0],
+                            app_hello_sensor_distance_client_char_config[1]);
+                    gatt_status = WICED_BT_GATT_SUCCESS;
+                    break;
+
                 case HDLC_HELLO_SENSOR_BLINK_VALUE:
                     if (len != 1)
                     {
@@ -795,6 +808,39 @@ void app_bt_send_message(void)
  *
  *   @return None
  */
+void app_bt_update_distance_value(uint16_t distance_mm)
+{
+    uint8_t *p_distance = app_hello_sensor_distance;
+
+    p_distance[0] = (uint8_t)(distance_mm & 0xFFU);
+    p_distance[1] = (uint8_t)((distance_mm >> 8) & 0xFFU);
+}
+
+void app_bt_send_distance_notification(void)
+{
+    wiced_bt_gatt_status_t status;
+
+    if (hello_sensor_state.conn_id == 0U)
+    {
+        return;
+    }
+
+    if (0U == app_hello_sensor_distance_client_char_config[0])
+    {
+        return;
+    }
+
+    if (app_hello_sensor_distance_client_char_config[0] & GATT_CLIENT_CONFIG_NOTIFICATION)
+    {
+        status = wiced_bt_gatt_server_send_notification(hello_sensor_state.conn_id,
+                                                        HDLC_HELLO_SENSOR_DISTANCE_VALUE,
+                                                        app_hello_sensor_distance_len,
+                                                        app_hello_sensor_distance,
+                                                        NULL);
+        printf("Distance Notification Status: %d \n", status);
+    }
+}
+
 void app_bt_free_buffer(uint8_t *p_buf)
 {
     vPortFree(p_buf);

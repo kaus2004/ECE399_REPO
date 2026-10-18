@@ -81,6 +81,8 @@ void app_bt_free_buffer(uint8_t *p_event_data);
 void* app_bt_alloc_buffer(int len);
 void app_bt_gatt_increment_notify_value(void);
 void app_bt_send_message(void);
+void app_bt_update_distance_value(uint16_t distance_mm);
+void app_bt_send_distance_notification(void);
 typedef void(*pfn_free_buffer_t) (uint8_t *);
 
 #endif /* SOURCE_APP_BT_APP_BT_GATT_HANDLER_H_ */
