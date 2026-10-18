@@ -607,6 +607,10 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                     }
                     break;
 
+                /* Disabled: BLE distance telemetry is intentionally off until
+                 * the generated Distance GATT characteristic is restored.
+                 */
+                /*
                 case HDLD_HELLO_SENSOR_DISTANCE_CLIENT_CHAR_CONFIG:
                     if (len != 2)
                     {
@@ -619,6 +623,7 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                             app_hello_sensor_distance_client_char_config[1]);
                     gatt_status = WICED_BT_GATT_SUCCESS;
                     break;
+                */
 
                 case HDLC_HELLO_SENSOR_BLINK_VALUE:
                     if (len != 1)
@@ -808,6 +813,10 @@ void app_bt_send_message(void)
  *
  *   @return None
  */
+/* Disabled: BLE distance telemetry is intentionally off until the generated
+ * Distance GATT characteristic is restored.
+ */
+/*
 void app_bt_update_distance_value(uint16_t distance_mm)
 {
     uint8_t *p_distance = app_hello_sensor_distance;
@@ -840,6 +849,7 @@ void app_bt_send_distance_notification(void)
         printf("Distance Notification Status: %d \n", status);
     }
 }
+*/
 
 void app_bt_free_buffer(uint8_t *p_buf)
 {

@@ -170,6 +170,11 @@ void rover_safety_task(void *arg)
                 }
             }
 
+            /* Disabled: BLE distance telemetry is intentionally off until
+             * the generated Distance characteristic is restored.
+             * Keep VL53 polling, printing, and safety logic unchanged.
+             */
+            /*
             now_ticks = xTaskGetTickCount();
             if ((hello_sensor_state.conn_id != 0U) &&
                 (app_hello_sensor_distance_client_char_config[0] & GATT_CLIENT_CONFIG_NOTIFICATION) &&
@@ -179,6 +184,7 @@ void rover_safety_task(void *arg)
                 app_bt_send_distance_notification();
                 g_last_distance_ble_tx_tick = now_ticks;
             }
+            */
         }
 
         vTaskDelay(pdMS_TO_TICKS(10));
